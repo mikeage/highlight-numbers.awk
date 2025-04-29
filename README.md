@@ -22,17 +22,13 @@ Supports:
 strace -e trace=memory,file ./hello-world 2>&1 | highlight_numbers.awk
 ```
 
-Before:
+**Before:**
 
-```
-mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xf7ffd000
-```
+![Before](screenshots/before.png)
 
-After:
+**After:**
 
-* 8192 → colored uniquely
-* 0xf7ffd000 → colored + bold + underlined
-* Same number repeated later? Same color again!
+![After](screenshots/after.png)
 
 ## 📦 Installation
 
