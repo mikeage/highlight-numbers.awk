@@ -41,8 +41,12 @@ function make_style(num, h, r, g, b, minv, range) {
 	style = sprintf("\033[38;2;%d;%d;%dm", r, g, b)
 
 	# Big hex numbers (≥8 hex digits) → bold + underline
-	if (match(num, /^0x[0-9a-fA-F]{8,}$/)) {
-		style = style "\033[1m\033[4m"
+	# Extract the hex part without the 0x prefix for length checking
+	if (num ~ /^0x/) {
+		hex_part = substr(num, 3)
+		if (length(hex_part) >= 8) {
+			style = style "\033[1m\033[4m"
+		}
 	}
 
 	return style
@@ -65,7 +69,7 @@ function make_style(num, h, r, g, b, minv, range) {
 					if (prev_char ~ /[A-Za-z0-9_\.\/]/)
 						is_valid = 0
 				}
-
+				
 				if (is_valid) {
 					# Find the end of the number
 					num_start = pos
@@ -73,19 +77,19 @@ function make_style(num, h, r, g, b, minv, range) {
 					while (num_end <= length(line) && substr(line, num_end, 1) ~ /[0-9]/)
 						num_end++
 					num_end--
-
+					
 					# Check if it's a standalone number
 					if (num_end < length(line)) {
 						next_char = substr(line, num_end+1, 1)
 						if (next_char ~ /[A-Za-z0-9_\.\/]/)
 							is_valid = 0
 					}
-
+					
 					if (is_valid) {
 						num = substr(line, num_start, num_end - num_start + 1)
 						if (!(num in styles))
 							styles[num] = make_style(num)
-
+						
 						output = output styles[num] num "\033[0m"
 						pos = num_end + 1
 						continue
@@ -93,7 +97,7 @@ function make_style(num, h, r, g, b, minv, range) {
 				}
 			}
 		}
-
+		
 		# Check for positive numbers (hex or decimal)
 		if (substr(line, pos, 1) ~ /[0-9]/) {
 			# Check if this could be a standalone number
@@ -103,21 +107,21 @@ function make_style(num, h, r, g, b, minv, range) {
 				if (prev_char ~ /[A-Za-z0-9_\.\/]/)
 					is_valid = 0
 			}
-
+			
 			if (is_valid) {
 				# Check for hex numbers
-				if (pos < length(line) - 1 &&
-					substr(line, pos, 2) == "0x" &&
-					pos + 2 <= length(line) &&
+				if (pos < length(line) - 1 && 
+					substr(line, pos, 2) == "0x" && 
+					pos + 2 <= length(line) && 
 					substr(line, pos+2, 1) ~ /[0-9a-fA-F]/) {
-
+					
 					# Find the end of the hex number
 					num_start = pos
 					num_end = pos + 2
 					while (num_end <= length(line) && substr(line, num_end, 1) ~ /[0-9a-fA-F]/)
 						num_end++
 					num_end--
-
+					
 				} else {
 					# Find the end of the decimal number
 					num_start = pos
@@ -126,31 +130,30 @@ function make_style(num, h, r, g, b, minv, range) {
 						num_end++
 					num_end--
 				}
-
+				
 				# Check if it's a standalone number
 				if (num_end < length(line)) {
 					next_char = substr(line, num_end+1, 1)
 					if (next_char ~ /[A-Za-z0-9_\.\/]/)
 						is_valid = 0
 				}
-
+				
 				if (is_valid) {
 					num = substr(line, num_start, num_end - num_start + 1)
 					if (!(num in styles))
 						styles[num] = make_style(num)
-
+					
 					output = output styles[num] num "\033[0m"
 					pos = num_end + 1
 					continue
 				}
 			}
 		}
-
+		
 		# Not a number, just add the character
 		output = output substr(line, pos, 1)
 		pos++
 	}
-
+	
 	print output
 }
-
