@@ -1,6 +1,6 @@
-# `highlight_numbers.awk` 🎨🔢
+# `highlight_numbers` 🎨🔢
 
-A lightweight `awk` script for colorizing numbers in any text stream — especially useful for inspecting `strace`, logs, memory addresses, file descriptors, or any output with numeric data.
+A lightweight `awk`, `perl`, and `python3` script for colorizing numbers in any text stream — especially useful for inspecting `strace`, logs, memory addresses, file descriptors, or any output with numeric data.
 
 This script highlights every numeric value (both hexadecimal and decimal), assigning each a **deterministic, bright, unique RGB foreground color**.  
 
@@ -12,7 +12,9 @@ Supports:
 - ✅ Foreground colors only (no background noise)
 - ✅ Bold + underline for large hex values
 - ✅ Fast, line-safe processing (no duplication, no corruption)
-- ✅ Fully compatible with [`mawk`](https://invisible-island.net/mawk/) and `gawk`
+- ✅ Fully compatible with [`mawk`](https://invisible-island.net/mawk/) and `gawk` (for use in minimal Ubuntu docker image)
+- ✅ Fully compatible with `perl` and `python3` with no additional packages required
+
 
 ---
 
@@ -38,13 +40,13 @@ Just clone the repo and make the script executable:
 ```bash
 git clone https://github.com/mikeage/highlight-numbers
 cd highlight-numbers
-chmod +x highlight_numbers.awk
+chmod +x highlight_numbers.*
 ```
 
 Optional: copy to a system-wide location:
 
 ```bash
-sudo cp highlight_numbers.awk /usr/local/bin/highlight-numbers.awk
+sudo cp highlight_numbers.* /usr/local/bin/
 ```
 
 ## 🧠 How it works
@@ -62,20 +64,16 @@ POSIX-compliant
 Works with:
 * mawk
 * gawk
+* python3
+* perl
 
-No dependencies other than a standard awk interpreter
+No dependencies on any packages
 
 ## 🔒 Limitations
 
 * ANSI color codes are supported in most modern terminals (e.g. xterm, iTerm2, gnome-terminal, wezterm). If you're on an older terminal, 24-bit color may not display correctly.
 * Does not handle multiline numbers (e.g., wrapped across lines)
 * Doesn't parse structure (e.g., JSON nesting), just colors numbers in stream
-
-## 🛠 TODO
-
- * Add flag support (--bold-only, --underline-only, etc.)
- * Optionally dump a color legend after processing
- * Group similar ranges (e.g., mmap-related) with soft background shades
 
 ## 📝 License
 
@@ -85,6 +83,6 @@ Enjoy, and feel free to fork or improve!
 
 ## 👤 Author
 
-Created by Mike Miller + gpt-4o.
+Created by Mike Miller, gpt-4o, and claude-3.7-sonnet.
 
 Inspired by tools like colout, strace-analyzer, and too much staring at monochrome logs.
